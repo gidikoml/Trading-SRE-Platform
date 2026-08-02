@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, jsonify, request, Response
 from prometheus_client import Counter, generate_latest
 
@@ -6,8 +8,12 @@ from models import Order
 
 app = Flask(__name__)
 
-# PostgreSQL Configuration
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://enterprise_user:enterprise_password@localhost:5432/enterprise_db"
+# Database Configuration
+if os.getenv("TESTING") == "true":
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
+else:
+    app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://enterprise_user:enterprise_password@localhost:5432/enterprise_db"
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
@@ -27,7 +33,7 @@ def home():
     REQUEST_COUNT.inc()
 
     return jsonify({
-        "service": "Order Service",
+        "service": "Trading Order Service",
         "status": "Running"
     })
 

@@ -5,6 +5,7 @@ pipeline {
         VENV = "venv"
         IMAGE_NAME = "trading-order-service"
         IMAGE_TAG = "v1"
+        TESTING = "true"
     }
 
     stages {
@@ -48,6 +49,7 @@ pipeline {
             steps {
                 sh '''
                     . ${VENV}/bin/activate
+                    export TESTING=true
                     cd app/order-service
                     pytest -v
                 '''
@@ -94,7 +96,7 @@ pipeline {
         stage('Build Successful') {
             steps {
                 echo '========================================='
-                echo ' Trading SRE Platform Pipeline SUCCESS'
+                echo 'Trading SRE Platform Pipeline SUCCESS'
                 echo '========================================='
             }
         }
