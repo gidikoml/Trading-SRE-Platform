@@ -3,6 +3,8 @@ pipeline {
 
     environment {
         VENV = "venv"
+        IMAGE_NAME = "trading-order-service"
+        IMAGE_TAG = "v1"
     }
 
     stages {
@@ -42,7 +44,7 @@ pipeline {
             }
         }
 
-        stage('Verify Flask Application') {
+        stage('Verify Python Code') {
             steps {
                 sh '''
                     . ${VENV}/bin/activate
@@ -50,6 +52,31 @@ pipeline {
                     python -m py_compile app.py
                     python -m py_compile database.py
                     python -m py_compile models.py
+                '''
+            }
+        }
+
+        stage('Check Docker') {
+            steps {
+                sh '''
+                    docker --version
+                    docker ps
+                '''
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                    docker build -t ${IMAGE_NAME}:${IMAGE_TAG} app/order-service
+                '''
+            }
+        }
+
+        stage('Verify Docker Image') {
+            steps {
+                sh '''
+                    docker images
                 '''
             }
         }
@@ -64,9 +91,6 @@ pipeline {
     }
 
     post {
-        always {
-            cleanWs()
-        }
 
         success {
             echo 'Pipeline completed successfully.'
@@ -75,5 +99,10 @@ pipeline {
         failure {
             echo 'Pipeline failed.'
         }
+
+        always {
+            cleanWs()
+        }
+
     }
 }
