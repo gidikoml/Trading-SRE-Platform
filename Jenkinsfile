@@ -12,13 +12,13 @@ pipeline {
 
         stage('Python Version') {
             steps {
-                bat 'python --version'
+                sh 'python3 --version'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                bat 'pip install -r app\\order-service\\requirements.txt'
+                sh 'pip3 install -r app/order-service/requirements.txt'
             }
         }
 
@@ -27,6 +27,5 @@ pipeline {
                 echo 'Trading SRE Platform Build Successful'
             }
         }
-
     }
 }
