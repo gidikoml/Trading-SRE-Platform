@@ -44,6 +44,16 @@ pipeline {
             }
         }
 
+        stage('Run Unit Tests') {
+            steps {
+                sh '''
+                    . ${VENV}/bin/activate
+                    cd app/order-service
+                    pytest -v
+                '''
+            }
+        }
+
         stage('Verify Python Code') {
             steps {
                 sh '''
@@ -76,16 +86,16 @@ pipeline {
         stage('Verify Docker Image') {
             steps {
                 sh '''
-                    docker images
+                    docker images | grep ${IMAGE_NAME}
                 '''
             }
         }
 
         stage('Build Successful') {
             steps {
-                echo '======================================='
-                echo ' Trading SRE Platform Build SUCCESS '
-                echo '======================================='
+                echo '========================================='
+                echo ' Trading SRE Platform Pipeline SUCCESS'
+                echo '========================================='
             }
         }
     }
@@ -103,6 +113,5 @@ pipeline {
         always {
             cleanWs()
         }
-
     }
 }
