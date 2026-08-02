@@ -1,16 +1,12 @@
-
 pipeline {
     agent any
-
-    tools {
-        sonarQubeScanner 'SonarScanner'
-    }
 
     environment {
         VENV = "venv"
         IMAGE_NAME = "trading-order-service"
         IMAGE_TAG = "v1"
         TESTING = "true"
+        SCANNER_HOME = tool 'SonarScanner'
     }
 
     stages {
@@ -64,10 +60,9 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     sh '''
-                        ${SONAR_SCANNER_HOME}/bin/sonar-scanner \
+                        ${SCANNER_HOME}/bin/sonar-scanner \
                         -Dsonar.projectKey=Trading-SRE-Platform \
                         -Dsonar.projectName=Trading-SRE-Platform \
-                        -Dsonar.projectVersion=1.0 \
                         -Dsonar.sources=app/order-service \
                         -Dsonar.python.version=3.11
                     '''
