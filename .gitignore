@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environments
+venv/
+.env
+
+# Secrets
+password.txt
+password.b64
+
+# Backup files
+*_backup.py
+app_backup.py
+
+# OS
+.DS_Store
+Thumbs.db
