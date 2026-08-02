@@ -1,5 +1,10 @@
+
 pipeline {
     agent any
+
+    tools {
+        sonarQubeScanner 'SonarScanner'
+    }
 
     environment {
         VENV = "venv"
@@ -30,7 +35,6 @@ pipeline {
                 sh '''
                     python3 -m venv ${VENV}
                     . ${VENV}/bin/activate
-                    python --version
                     pip install --upgrade pip
                 '''
             }
@@ -53,6 +57,21 @@ pipeline {
                     cd app/order-service
                     pytest -v
                 '''
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                        ${SONAR_SCANNER_HOME}/bin/sonar-scanner \
+                        -Dsonar.projectKey=Trading-SRE-Platform \
+                        -Dsonar.projectName=Trading-SRE-Platform \
+                        -Dsonar.projectVersion=1.0 \
+                        -Dsonar.sources=app/order-service \
+                        -Dsonar.python.version=3.11
+                    '''
+                }
             }
         }
 
@@ -93,17 +112,16 @@ pipeline {
             }
         }
 
-        stage('Build Successful') {
+        stage('Pipeline Completed') {
             steps {
-                echo '========================================='
-                echo 'Trading SRE Platform Pipeline SUCCESS'
-                echo '========================================='
+                echo '========================================'
+                echo 'Trading SRE Platform CI SUCCESS'
+                echo '========================================'
             }
         }
     }
 
     post {
-
         success {
             echo 'Pipeline completed successfully.'
         }
